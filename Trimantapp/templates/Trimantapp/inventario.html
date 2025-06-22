@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario - Trimant</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<img src="{% static 'images/Fondo.png' %}" alt="Logo Trimant" class="logo">
+
+<div class="search-box">
+    <div class="search-input-wrapper">
+        <img src="{% static 'images/lupa.png' %}" alt="Buscar">
+        <input type="text" id="buscar" placeholder="Buscar...">
+    </div>
+</div>
+
+<div class="container">
+    <h2>CASA CENTRAL</h2>
+
+    <!-- Galería de herramientas encima de la tabla -->
+    <div class="galeria">
+        {% for fila in datos %}
+            {% if fila.TIENE_IMAGEN %}
+            <img 
+                src="{% static 'herramientas/' %}{{ fila.SKU }}.png" 
+                alt="{{ fila.HERRAMIENTAS }}" 
+                class="herramienta-img" 
+                data-sku="{{ fila.SKU }}"
+            >
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Tabla de datos -->
+    <table id="tabla-inventario">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>HERRAMIENTAS</th>
+                <th>CANTIDADES</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-body">
+            {% for fila in datos %}
+            <tr data-sku="{{ fila.SKU }}">
+                <td>{{ fila.SKU }}</td>
+                <td>{{ fila.HERRAMIENTAS }}</td>
+                <td>{{ fila.CANTIDADES }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination" id="paginacion"></div>
+    <div style="text-align:center; margin: 20px;">
+        <button onclick="mostrarPagina(1)">Ver Todo</button>
+    </div>
+</div>
+
+<script>
+    const filas = Array.from(document.querySelectorAll("#tabla-body tr"));
+    const filasPorPagina = 10;
+    let paginaActual = 1;
+
+    function mostrarPagina(pagina) {
+        const inicio = (pagina - 1) * filasPorPagina;
+        const fin = inicio + filasPorPagina;
+
+        filas.forEach((fila, index) => {
+            fila.style.display = index >= inicio && index < fin ? "" : "none";
+            fila.classList.remove("resaltado");
+        });
+
+        paginaActual = pagina;
+        crearPaginacion();
+    }
+
+    function crearPaginacion() {
+        const totalPaginas = Math.ceil(filas.length / filasPorPagina);
+        const paginacion = document.getElementById("paginacion");
+        paginacion.innerHTML = "";
+
+        const botonesVisibles = 10;
+        const inicio = Math.max(1, paginaActual - Math.floor(botonesVisibles / 2));
+        const fin = Math.min(totalPaginas, inicio + botonesVisibles - 1);
+
+        if (paginaActual > 1) {
+            paginacion.appendChild(crearBoton("«", 1));
+            paginacion.appendChild(crearBoton("‹", paginaActual - 1));
+        }
+
+        for (let i = inicio; i <= fin; i++) {
+            const btn = crearBoton(i, i);
+            if (i === paginaActual) btn.classList.add("active");
+            paginacion.appendChild(btn);
+        }
+
+        if (paginaActual < totalPaginas) {
+            paginacion.appendChild(crearBoton("›", paginaActual + 1));
+            paginacion.appendChild(crearBoton("»", totalPaginas));
+        }
+    }
+
+    function crearBoton(texto, pagina) {
+        const btn = document.createElement("button");
+        btn.textContent = texto;
+        btn.addEventListener("click", () => mostrarPagina(pagina));
+        return btn;
+    }
+
+    document.getElementById("buscar").addEventListener("keyup", function () {
+        const valor = this.value.toLowerCase();
+        let resultados = 0;
+
+        filas.forEach(fila => {
+            const texto = fila.textContent.toLowerCase();
+            const visible = texto.includes(valor);
+            fila.style.display = visible ? "" : "none";
+            if (visible) resultados++;
+        });
+
+        if (valor === "") {
+            mostrarPagina(1);
+        } else {
+            document.getElementById("paginacion").innerHTML = "";
+        }
+    });
+
+    mostrarPagina(paginaActual);
+
+    // Filtrado al hacer clic en la imagen
+    document.querySelectorAll(".herramienta-img").forEach(img => {
+        img.addEventListener("click", () => {
+            const skuSeleccionado = img.dataset.sku.toLowerCase();
+            let encontrado = false;
+
+            filas.forEach(fila => {
+                const filaSKU = fila.dataset.sku.toLowerCase();
+                if (filaSKU === skuSeleccionado) {
+                    fila.style.display = "";
+                    fila.classList.add("resaltado");
+                    encontrado = true;
+                } else {
+                    fila.style.display = "none";
+                    fila.classList.remove("resaltado");
+                }
+            });
+
+            document.getElementById("paginacion").innerHTML = "";
+
+            if (!encontrado) {
+                alert("No se encontró el SKU en la tabla.");
+            }
+        });
+    });
+</script>
+
+<style>
+/* Estilo para resaltar la fila */
+.resaltado {
+    background-color: rgba(255, 255, 0, 0.3);
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.6);
+    animation: highlight 0.8s ease-in-out;
+}
+
+@keyframes highlight {
+    0%   { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+</style>
+
+</body>
+</html>

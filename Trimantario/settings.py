@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-)o!5()p4n)y@_=y0g*!y6l7fe89y^d#jl=yng4)i6&m00@j$(8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -121,3 +121,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATICFILES_DIRS = [
+    BASE_DIR / 'Trimantapp/static',
+]
+
