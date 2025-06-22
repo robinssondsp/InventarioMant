@@ -23,17 +23,20 @@
 
     <!-- Galería de herramientas encima de la tabla -->
     <div class="galeria">
-        {% for fila in datos %}
-            {% if fila.TIENE_IMAGEN %}
+    {% for fila in datos %}
+        {% if fila.TIENE_IMAGEN %}
+        <div class="herramienta-contenedor">
             <img 
                 src="{% static 'herramientas/' %}{{ fila.SKU }}.png" 
                 alt="{{ fila.HERRAMIENTAS }}" 
                 class="herramienta-img" 
                 data-sku="{{ fila.SKU }}"
             >
-            {% endif %}
-        {% endfor %}
-    </div>
+            <div class="nombre-sku">{{ fila.SKU }}</div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
 
     <!-- Tabla de datos -->
     <table id="tabla-inventario">
