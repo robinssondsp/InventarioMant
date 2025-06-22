@@ -9,169 +9,92 @@
 </head>
 <body>
 
-<img src="{% static 'images/Fondo.png' %}" alt="Logo Trimant" class="logo">
+<img src="{% static 'images/Fondo.png' %}" alt="Logotipo Trimant" class="logo">
 
 <div class="search-box">
     <div class="search-input-wrapper">
         <img src="{% static 'images/lupa.png' %}" alt="Buscar">
-        <input type="text" id="buscar" placeholder="Buscar...">
+        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Buscar por nombre o SKU...">
     </div>
 </div>
 
 <div class="container">
-    <h2>CASA CENTRAL</h2>
+    <h2>Inventario de Herramientas</h2>
 
     <!-- Galería de herramientas encima de la tabla -->
     <div class="galeria">
         {% for fila in datos %}
             {% if fila.TIENE_IMAGEN %}
-            <img 
-                src="{% static 'herramientas/' %}{{ fila.SKU }}.png" 
-                alt="{{ fila.HERRAMIENTAS }}" 
-                class="herramienta-img" 
-                data-sku="{{ fila.SKU }}"
-            >
+            <div class="galeria-item">
+                <img 
+                    src="{% static 'herramientas/' %}{{ fila.SKU }}.png" 
+                    alt="{{ fila.HERRAMIENTAS }}" 
+                    class="herramienta-img" 
+                    data-sku="{{ fila.SKU }}">
+                <div class="nombre-herramienta">{{ fila.SKU }}</div>
+            </div>
             {% endif %}
         {% endfor %}
     </div>
 
-    <!-- Tabla de datos -->
-    <table id="tabla-inventario">
+    <table id="inventoryTable">
         <thead>
             <tr>
-                <th>SKU</th>
-                <th>HERRAMIENTAS</th>
-                <th>CANTIDADES</th>
+                {% for col in datos.0.keys %}
+                    <th>{{ col }}</th>
+                {% endfor %}
             </tr>
         </thead>
-        <tbody id="tabla-body">
+        <tbody>
             {% for fila in datos %}
             <tr data-sku="{{ fila.SKU }}">
-                <td>{{ fila.SKU }}</td>
-                <td>{{ fila.HERRAMIENTAS }}</td>
-                <td>{{ fila.CANTIDADES }}</td>
+                {% for celda in fila.values %}
+                    <td>{{ celda }}</td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <div class="pagination" id="paginacion"></div>
-    <div style="text-align:center; margin: 20px;">
-        <button onclick="mostrarPagina(1)">Ver Todo</button>
-    </div>
+
+    <div class="pagination" id="pagination"></div>
 </div>
 
 <script>
-    const filas = Array.from(document.querySelectorAll("#tabla-body tr"));
-    const filasPorPagina = 10;
-    let paginaActual = 1;
+    function searchTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("inventoryTable");
+        tr = table.getElementsByTagName("tr");
 
-    function mostrarPagina(pagina) {
-        const inicio = (pagina - 1) * filasPorPagina;
-        const fin = inicio + filasPorPagina;
-
-        filas.forEach((fila, index) => {
-            fila.style.display = index >= inicio && index < fin ? "" : "none";
-            fila.classList.remove("resaltado");
-        });
-
-        paginaActual = pagina;
-        crearPaginacion();
-    }
-
-    function crearPaginacion() {
-        const totalPaginas = Math.ceil(filas.length / filasPorPagina);
-        const paginacion = document.getElementById("paginacion");
-        paginacion.innerHTML = "";
-
-        const botonesVisibles = 10;
-        const inicio = Math.max(1, paginaActual - Math.floor(botonesVisibles / 2));
-        const fin = Math.min(totalPaginas, inicio + botonesVisibles - 1);
-
-        if (paginaActual > 1) {
-            paginacion.appendChild(crearBoton("«", 1));
-            paginacion.appendChild(crearBoton("‹", paginaActual - 1));
-        }
-
-        for (let i = inicio; i <= fin; i++) {
-            const btn = crearBoton(i, i);
-            if (i === paginaActual) btn.classList.add("active");
-            paginacion.appendChild(btn);
-        }
-
-        if (paginaActual < totalPaginas) {
-            paginacion.appendChild(crearBoton("›", paginaActual + 1));
-            paginacion.appendChild(crearBoton("»", totalPaginas));
+        for (i = 1; i < tr.length; i++) {
+            tr[i].style.display = "none";
+            td = tr[i].getElementsByTagName("td");
+            for (var j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        break;
+                    }
+                }
+            }
         }
     }
 
-    function crearBoton(texto, pagina) {
-        const btn = document.createElement("button");
-        btn.textContent = texto;
-        btn.addEventListener("click", () => mostrarPagina(pagina));
-        return btn;
-    }
-
-    document.getElementById("buscar").addEventListener("keyup", function () {
-        const valor = this.value.toLowerCase();
-        let resultados = 0;
-
-        filas.forEach(fila => {
-            const texto = fila.textContent.toLowerCase();
-            const visible = texto.includes(valor);
-            fila.style.display = visible ? "" : "none";
-            if (visible) resultados++;
-        });
-
-        if (valor === "") {
-            mostrarPagina(1);
-        } else {
-            document.getElementById("paginacion").innerHTML = "";
-        }
-    });
-
-    mostrarPagina(paginaActual);
-
-    // Filtrado al hacer clic en la imagen
-    document.querySelectorAll(".herramienta-img").forEach(img => {
-        img.addEventListener("click", () => {
-            const skuSeleccionado = img.dataset.sku.toLowerCase();
-            let encontrado = false;
-
-            filas.forEach(fila => {
-                const filaSKU = fila.dataset.sku.toLowerCase();
-                if (filaSKU === skuSeleccionado) {
-                    fila.style.display = "";
-                    fila.classList.add("resaltado");
-                    encontrado = true;
-                } else {
-                    fila.style.display = "none";
-                    fila.classList.remove("resaltado");
+    document.querySelectorAll('.herramienta-img').forEach(img => {
+        img.addEventListener('click', function() {
+            let sku = this.dataset.sku;
+            document.querySelectorAll('#inventoryTable tbody tr').forEach(tr => {
+                if (tr.dataset.sku === sku) {
+                    tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    tr.style.backgroundColor = '#ffeaa7';
+                    setTimeout(() => tr.style.backgroundColor = '', 2000);
                 }
             });
-
-            document.getElementById("paginacion").innerHTML = "";
-
-            if (!encontrado) {
-                alert("No se encontró el SKU en la tabla.");
-            }
         });
     });
 </script>
-
-<style>
-/* Estilo para resaltar la fila */
-.resaltado {
-    background-color: rgba(255, 255, 0, 0.3);
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(255, 255, 0, 0.6);
-    animation: highlight 0.8s ease-in-out;
-}
-
-@keyframes highlight {
-    0%   { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-</style>
 
 </body>
 </html>

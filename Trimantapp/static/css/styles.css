@@ -1,247 +1,100 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    color: white;
-    background: linear-gradient(to top, rgb(140, 210, 235), rgb(37, 150, 190), rgb(25, 90, 120));
-    overflow-x: hidden;
-}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario - Trimant</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
 
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: inherit;
-}
+<img src="{% static 'images/Fondo.png' %}" alt="Logotipo Trimant" class="logo">
 
-.logo {
-    position: fixed;
-    top: 30px;
-    left: 30px;
-    width: 120px;
-    height: auto;
-    z-index: 1000;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+<div class="search-box">
+    <div class="search-input-wrapper">
+        <img src="{% static 'images/lupa.png' %}" alt="Buscar">
+        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Buscar por nombre o SKU...">
+    </div>
+</div>
 
-.logo:hover {
-    transform: scale(1.08);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
-}
+<div class="container">
+    <h2>Inventario de Herramientas</h2>
 
-.search-box {
-    position: fixed;
-    top: 40px;
-    
-    right: 60px;
-    z-index: 999;
-}
+    <!-- Galería de herramientas encima de la tabla -->
+    <div class="galeria">
+        {% for fila in datos %}
+            {% if fila.TIENE_IMAGEN %}
+            <div class="galeria-item">
+                <img 
+                    src="{% static 'herramientas/' %}{{ fila.SKU }}.png" 
+                    alt="{{ fila.HERRAMIENTAS }}" 
+                    class="herramienta-img" 
+                    data-sku="{{ fila.SKU }}">
+                <div class="nombre-herramienta">{{ fila.SKU }}</div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 
-.search-input-wrapper {
-    position: relative;
-    max-width: 100%;
-}
+    <table id="inventoryTable">
+        <thead>
+            <tr>
+                {% for col in datos.0.keys %}
+                    <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in datos %}
+            <tr data-sku="{{ fila.SKU }}">
+                {% for celda in fila.values %}
+                    <td>{{ celda }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-.search-input-wrapper input[type="text"] {
-    width: 100%;
-    padding: 10px 35px 10px 40px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    outline: none;
-    background-color: #fff;
-    color: #333;
-    box-sizing: border-box;
-}
+    <div class="pagination" id="pagination"></div>
+</div>
 
-.search-input-wrapper img {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    opacity: 0.6;
-}
+<script>
+    function searchTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("inventoryTable");
+        tr = table.getElementsByTagName("tr");
 
-.container {
-    width: 90%;
-    margin: 160px auto 50px auto;
-    text-align: center;
-}
-
-h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.7);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    overflow: hidden;
-    font-size: 16px;
-}
-
-th, td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: center;
-    color: #fff;
-    backdrop-filter: blur(4px);
-    text-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
-}
-
-th {
-    background-color: rgba(37, 150, 190, 0.7);
-}
-
-.pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.pagination button {
-    padding: 6px 10px;
-    border: none;
-    border-radius: 6px;
-    background-color: #ffffffaa;
-    color: #1e4e6c;
-    font-weight: bold;
-    cursor: pointer;
-    min-width: 35px;
-    font-size: 14px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-
-.pagination button.active {
-    background-color: #2596be;
-    color: white;
-}
-
-.pagination button:hover:not(.active) {
-    background-color: #d3f1fb;
-}
-
-@media (max-width: 600px) {
-    html, body {
-        font-size: 15px;
+        for (i = 1; i < tr.length; i++) {
+            tr[i].style.display = "none";
+            td = tr[i].getElementsByTagName("td");
+            for (var j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    .logo {
-        width: 90px;
-        top: 15px;
-        left: 15px;
-    }
+    document.querySelectorAll('.herramienta-img').forEach(img => {
+        img.addEventListener('click', function() {
+            let sku = this.dataset.sku;
+            document.querySelectorAll('#inventoryTable tbody tr').forEach(tr => {
+                if (tr.dataset.sku === sku) {
+                    tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    tr.style.backgroundColor = '#ffeaa7';
+                    setTimeout(() => tr.style.backgroundColor = '', 2000);
+                }
+            });
+        });
+    });
+</script>
 
-    .search-box {
-        top: 120px;
-        left: 10px;
-        right: 10px;
-        width: auto;
-    }
-
-    .search-input-wrapper input[type="text"] {
-        width: 100%;
-        font-size: 14px;
-        padding: 12px 40px 12px 45px;
-    }
-
-    .search-input-wrapper img {
-        width: 18px;
-        height: 18px;
-        left: 14px;
-    }
-
-    .container {
-        margin-top: 200px;
-    }
-
-    h2 {
-        font-size: 22px;
-    }
-
-    table {
-        font-size: 14px;
-    }
-
-    th, td {
-        padding: 10px;
-    }
-
-    .pagination button {
-        font-size: 13px;
-        padding: 5px 8px;
-        min-width: 30px;
-    }
-}
-
-.galeria {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-    margin: 30px auto;
-}
-
-.herramienta-img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.herramienta-img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-}
-
-/* Animación suave de entrada para las imágenes de herramientas */
-
-.herramienta-img {
-    width: 95px;
-    height: 95px;
-    object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    padding: 5px;
-    background-color: rgba(255,255,255,0.1);
-    opacity: 0;
-    transform: translateY(20px);
-    animation: aparecer 0.6s ease-out forwards;
-}
-
-.herramienta-img:nth-child(odd) {
-    animation-delay: 0.1s;
-}
-
-.herramienta-img:nth-child(even) {
-    animation-delay: 0.2s;
-}
-
-@keyframes aparecer {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+</body>
+</html>
