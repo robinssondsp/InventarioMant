@@ -1,0 +1,65 @@
+Listado de rutas de carpetas
+El n£mero de serie del volumen es 0E8B-838A
+C:.
+³   .gitignore
+³   db.sqlite3
+³   estructura.txt
+³   Inventario.xlsx
+³   manage.py
+³   
+ÃÄÄÄTrimantapp
+³   ³   admin.py
+³   ³   apps.py
+³   ³   models.py
+³   ³   tests.py
+³   ³   urls.py
+³   ³   views.py
+³   ³   __init__.py
+³   ³   
+³   ÃÄÄÄmigrations
+³   ³   ³   __init__.py
+³   ³   ³   
+³   ³   ÀÄÄÄ__pycache__
+³   ³           __init__.cpython-313.pyc
+³   ³           
+³   ÃÄÄÄstatic
+³   ³   ÃÄÄÄcss
+³   ³   ³       styles.css
+³   ³   ³       
+³   ³   ÃÄÄÄherramientas
+³   ³   ³       TACH1401.png
+³   ³   ³       TACS1401.png
+³   ³   ³       TIDLI205581.png
+³   ³   ³       TIDLI20668.png
+³   ³   ³       TOSLI23048.png
+³   ³   ³       TOSLI241183.png
+³   ³   ³       
+³   ³   ÀÄÄÄimages
+³   ³           Fondo.png
+³   ³           lupa.png
+³   ³           
+³   ÃÄÄÄtemplates
+³   ³   ÀÄÄÄTrimantapp
+³   ³           inventario.html
+³   ³           
+³   ÀÄÄÄ__pycache__
+³           admin.cpython-313.pyc
+³           apps.cpython-313.pyc
+³           models.cpython-313.pyc
+³           urls.cpython-313.pyc
+³           views.cpython-313.pyc
+³           __init__.cpython-313.pyc
+³           
+ÀÄÄÄTrimantario
+    ³   asgi.py
+    ³   settings.py
+    ³   urls.py
+    ³   wsgi.py
+    ³   __init__.py
+    ³   
+    ÀÄÄÄ__pycache__
+            settings.cpython-313.pyc
+            urls.cpython-313.pyc
+            wsgi.cpython-313.pyc
+            __init__.cpython-313.pyc
+            
