@@ -40,7 +40,6 @@ body::before {
 .search-box {
     position: fixed;
     top: 40px;
-    
     right: 60px;
     z-index: 999;
 }
@@ -190,31 +189,26 @@ th {
     }
 }
 
+.galeria-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
 .galeria {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: inline-flex;
     gap: 16px;
-    margin: 30px auto;
+    padding-left: 10px;
 }
 
-.herramienta-img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.herramienta-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 110px;
 }
-
-.herramienta-img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-<<<<<<< HEAD
-}
-
-/* Animación suave de entrada para las imágenes de herramientas */
 
 .herramienta-img {
     width: 95px;
@@ -226,12 +220,16 @@ th {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid rgba(255, 255, 255, 0.3);
     padding: 5px;
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     opacity: 0;
     transform: translateY(20px);
     animation: aparecer 0.6s ease-out forwards;
 }
 
+.herramienta-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
 
 .herramienta-img:nth-child(odd) {
     animation-delay: 0.1s;
@@ -246,17 +244,6 @@ th {
         opacity: 1;
         transform: translateY(0);
     }
-}
-=======
-}
->>>>>>> 617581b (App Trimant)
-
-
-.herramienta-contenedor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 110px;
 }
 
 .nombre-sku {

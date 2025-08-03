@@ -21,22 +21,24 @@
 <div class="container">
     <h2>CASA CENTRAL</h2>
 
-    <!-- Galería de herramientas encima de la tabla -->
-    <div class="galeria">
-    {% for fila in datos %}
-        {% if fila.TIENE_IMAGEN %}
-        <div class="herramienta-contenedor">
-            <img 
-                src="{% static 'herramientas/' %}{{ fila.SKU }}.png" 
-                alt="{{ fila.HERRAMIENTAS }}" 
-                class="herramienta-img" 
-                data-sku="{{ fila.SKU }}"
-            >
-            <div class="nombre-sku">{{ fila.SKU }}</div>
+    <!-- Galería de herramientas con scroll horizontal -->
+    <div class="galeria-scroll">
+        <div class="galeria">
+        {% for fila in datos %}
+            {% if fila.TIENE_IMAGEN %}
+            <div class="herramienta-contenedor">
+                <img 
+                    src="{% static 'herramientas/' %}{{ fila.SKU }}.png" 
+                    alt="{{ fila.HERRAMIENTAS }}" 
+                    class="herramienta-img" 
+                    data-sku="{{ fila.SKU }}"
+                >
+                <div class="nombre-sku">{{ fila.SKU }}</div>
+            </div>
+            {% endif %}
+        {% endfor %}
         </div>
-        {% endif %}
-    {% endfor %}
-</div>
+    </div>
 
     <!-- Tabla de datos -->
     <table id="tabla-inventario">
@@ -162,14 +164,12 @@
 </script>
 
 <style>
-/* Estilo para resaltar la fila */
 .resaltado {
     background-color: rgba(255, 255, 0, 0.3);
     font-weight: bold;
     box-shadow: 0 0 10px rgba(255, 255, 0, 0.6);
     animation: highlight 0.8s ease-in-out;
 }
-
 @keyframes highlight {
     0%   { transform: scale(1.05); }
     100% { transform: scale(1); }
