@@ -4,9 +4,11 @@ charset-normalizer==3.4.4
 cryptography==46.0.3
 Django==5.2.7
 et_xmlfile==2.0.0
+gunicorn==26.0.0
 ngrok==1.5.1
 numpy==2.3.4
 openpyxl==3.1.5
+packaging==26.2
 pandas==2.3.3
 pdfminer.six==20250506
 pdfplumber==0.11.7
@@ -18,3 +20,4 @@ pytz==2025.2
 six==1.17.0
 sqlparse==0.5.3
 tzdata==2025.2
+whitenoise==6.12.0
